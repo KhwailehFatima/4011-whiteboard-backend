@@ -6,11 +6,12 @@ const base64 = require('base-64')
 
 const signup = async (req, res) => {
     try {
-        const { userName, email, password } = req.body;
+        const { userName, email, password, role } = req.body;
         const data = {
             userName,
             email,
-            password: await bcrypt.hash(password, 10)
+            password: await bcrypt.hash(password, 10),
+            role
         };
 
         const user = await userModel.create(data);
@@ -25,6 +26,7 @@ const signup = async (req, res) => {
 };
 
 const allUser = async (req, res) => {
+    // console.log("req.user.capabilities ======================================:", req.user.capabilities)
     const users = await userModel.findAll();
     res.status(200).json(users)
 };
@@ -33,7 +35,7 @@ const signin = async (req, res) => {
     const basicHeader = req.headers.authorization.split(' ');
     const encodedValue = basicHeader.pop();
     const decodedValue = base64.decode(encodedValue)
-    // console.log(decodedValue)
+    console.log(decodedValue)
     const [userName, password] = decodedValue.split(':');
 
     const user = await userModel.findOne({

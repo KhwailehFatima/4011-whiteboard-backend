@@ -7,13 +7,13 @@ const { Post, commentModel } = require('../models/index');
 // const { Comment } = require('../models/index');
 
 const bearerAuth = require('../middlewares/bearerAuthUser')
+const acl = require('../middlewares/acl');
 
-
-router.get('/post', bearerAuth, getAllPosts);
-router.get('/post/:id', getOnePost);
-router.post('/post', addPost);
-router.put('/post/:id', updatePost);
-router.delete('/post/:id', deletePost);
+router.get('/post', bearerAuth, acl('read'), getAllPosts);
+router.get('/post/:id',bearerAuth, acl('read'), getOnePost);
+router.post('/post',bearerAuth, acl('create'), addPost);
+router.put('/post/:id',bearerAuth, acl('update'), updatePost);
+router.delete('/post/:id',bearerAuth, acl('delete'), deletePost);
 
 
 async function getAllPosts(req, res) {
