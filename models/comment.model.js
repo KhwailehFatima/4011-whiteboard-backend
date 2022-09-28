@@ -1,15 +1,22 @@
 'use strict';
 
-const Comment = ( sequelize, DataTypes ) => sequelize.define( 'Comment', {
-    ownerID: {
+const Comment = (sequelize, DataTypes) => sequelize.define('Comment', {
+    comment: {
+        type: DataTypes.STRING
+    },
+    postID: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    content: {
+    userID: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    creator: {
         type: DataTypes.STRING,
-        defaultValue: 'test comment'
+        defaultValue: 'anonymous'
     }
-} );
+
+})
 
 module.exports = Comment;
- 

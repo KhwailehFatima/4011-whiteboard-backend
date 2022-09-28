@@ -1,31 +1,34 @@
 'use strict';
 
-const User = require( '../models' ).UserModel;
+const { userModel } = require('../models/index');
 
-const saveUser = async ( req, res, next ) => {
+const basicAuth = async (req, res, next) => {
     try {
-        const username = await User.findOne( {
-            where: {
-                username: req.body.username
-            }
-        } );
-        if ( username ) {
-            return res.status( 409 ).send( 'Username already taken' );
-        }
-        const email = await User.findOne( {
-            where: {
-                email: req.body.email
-            }
-        } );
-        if ( email ) {
-            return res.status( 409 ).send( 'Email already taken' );
-        }
-        next();
-    } catch ( e ) {
-        console.log( e );
-    }
-};
 
-module.exports = {
-    saveUser
-};
+        // we need to search for username in the Database
+        const userName =  await userModel.findOne({
+            where: {userName: req.body.userName}
+        })
+
+        if (userName) {
+            return res.status(409).send('Username already exists')
+        }
+    
+        // we need to search for the email in the Database
+        const email =  await userModel.findOne({
+            where: {email: req.body.email}
+        })
+
+        if (email) {
+            return res.status(409).send('Email already exists')
+        }
+    
+        next();
+
+    } catch (error) {
+        console.log(error.message);
+    }
+    
+}
+
+module.exports = basicAuth;

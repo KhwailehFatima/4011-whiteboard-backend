@@ -1,62 +1,65 @@
 'use strict';
 
-const express = require( 'express' );
+const express = require('express');
 const router = express.Router();
-const bearerAuth=require('../middlewares/bearerAuthUser')
-const { Post, CommentModel } = require( '../models/index' );
 
-// Routes
-router.get( '/post',bearerAuth , getAllPostswithComments );
-router.get( '/post/:id', bearerAuth, getOnePostWithComments );
-router.post( '/post',bearerAuth, addPost );
-router.put( '/post/:id', bearerAuth, updatePost );
-router.delete( '/post/:id',bearerAuth, deletePost );
+const { Post, commentModel } = require('../models/index');
+// const { Comment } = require('../models/index');
+
+const bearerAuth = require('../middlewares/bearerAuthUser')
 
 
- 
-async function getAllPostswithComments ( req, res ) {
-    let posts = await Post.readWithComments( CommentModel );
-    res.status( 200 ).json( {
-        posts
-    } );
+router.get('/post', bearerAuth, getAllPosts);
+router.get('/post/:id', getOnePost);
+router.post('/post', addPost);
+router.put('/post/:id', updatePost);
+router.delete('/post/:id', deletePost);
+
+
+async function getAllPosts(req, res) {
+    let post = await Post.readWithComments(commentModel);
+    res.status(200).json({
+        post
+    });
 }
 
- 
-async function getOnePostWithComments ( req, res ) {
+async function getOnePost(req, res) {
     const id = req.params.id;
-    const post = await Post.readOneWithComments( id, CommentModel );
-    res.status( 200 ).json( post );
+    let post = await Post.readWithComments(commentModel, id);
+    res.status(200).json(post);
 }
 
- 
-async function addPost ( req, res ) {
-    const newPost = req.body;
-    console.log("=================================================", Post.create)
-     Post.create( newPost )
-        .then( async () => {
-            await Post.read()
-                .then( ( posts ) => {
-                    res.status( 200 ).json( posts );
-                } );
-        } );
+async function addPost(req, res) {
+    let newPost = req.body;
+    let post = await Post.create(newPost);
+    res.status(201).json(post);
 }
 
-
-async function updatePost ( req, res ) {
-    const id = req.params.id;
+async function updatePost(req, res) {
+    let id = req.params.id;
     const obj = req.body;
-    const post = await Post.update( id, obj );
-    res.status( 201 ).json( post );
+
+    // we dont need this now
+    // let post = await Post.findOne({
+    //     where: { id: id }
+    // });
+
+    const updatedPost = await Post.update(id, obj);
+
+    // // another way for updating 
+    // const updatedPost = Post.update(
+    //     obj,
+    //     {where: {id: id}}
+    // )
+
+    res.status(202).json("Post Updated Successfully");
 }
 
- 
-async function deletePost ( req, res ) {
+async function deletePost(req, res) {
     const id = req.params.id;
-    await Post.delete( id ).then( () => {
-        res.status( 204 ).send( '' );
-    } );
+    // we changed destroy with delete and removed where: id:id
+    let deletedPost = await Post.delete(id);
+    res.status(204).json("Post Deleted Successfully");
 }
-
-
 
 module.exports = router;
