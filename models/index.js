@@ -15,15 +15,15 @@ const sequelizeOption = {
             rejectUnauthorized: false
         }
     }
-} 
+}
 
-// for local testing 
-const POSTGRES_URL = process.env.DATABASE_URL || 'postgresql://fatimakh:1234@localhost:5432/fatimakh';
-// const sequelizeOption = { } 
 
-let sequelize = new Sequelize(POSTGRES_URL, 
-    // sequelizeOption
-    );
+const POSTGRES_URL = process.env.DATABASE_URL
+
+
+let sequelize = new Sequelize(POSTGRES_URL,
+    sequelizeOption
+);
 
 // check if you  are authenticated and the connection is connected or not
 sequelize.authenticate().then(() => {
@@ -37,16 +37,16 @@ const commentModel = comment(sequelize, DataTypes);
 const userModel = user(sequelize, DataTypes);
 
 // relations between post and comment
-postModel.hasMany(commentModel, {foreignKey: 'postID', sourceKey: 'id'})
-commentModel.belongsTo(postModel, {foreignKey: 'postID', targetKey: 'id'})
+postModel.hasMany(commentModel, { foreignKey: 'postID', sourceKey: 'id' })
+commentModel.belongsTo(postModel, { foreignKey: 'postID', targetKey: 'id' })
 
 // relations between user and comment
-userModel.hasMany(commentModel, {foreignKey: 'userID', sourceKey: 'id'})
-commentModel.belongsTo(userModel, {foreignKey: 'userID', targetKey: 'id'})
+userModel.hasMany(commentModel, { foreignKey: 'userID', sourceKey: 'id' })
+commentModel.belongsTo(userModel, { foreignKey: 'userID', targetKey: 'id' })
 
 // adding creator from userModel userName to commentModel creator
 commentModel.addHook('beforeCreate', async (comment) => {
-    const user = await userModel.findOne({where: {id: comment.userID}})
+    const user = await userModel.findOne({ where: { id: comment.userID } })
     comment.creator = user.userName
 })
 
