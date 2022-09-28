@@ -1,33 +1,31 @@
-'use strict'
+"use strict";
 
-const { UserModel } = require('../models/index')
+const { userModel } = require("../models/index");
 
-module.exports = async (req, res, next) => {
-    console.log('From inside the middleware');
-    if (!req.headers.authorization) {
-        next('You\'re not authorized!!!!!!!!!!')
+const bearerAuth = async (req, res, next) => {
+  //    console.log('from inside the middleware');
+  if (!req.headers.authorization) {
+    next("You are not Authorized");
+  }
+  const token = req.headers.authorization.split(" ").pop();
+
+  try {
+    const validUser = await userModel.authenticateToken(token);
+    // console.log(validUser)
+    const userInfo = await userModel.findOne({
+      where: { userName: validUser.userName },
+    });
+    // console.log(userInfo)
+    if (userInfo) {
+      req.user = userInfo;
+      req.token = userInfo.token;
+      next();
+    } else {
+      next("Invalid Login");
     }
+  } catch (error) {
+    next("Invalid Login");
+  }
+};
 
-    console.log(req.headers.authorization)
-    const token = req.headers.authorization.split(' ')[1];
-
-    try {
-        const validUser = await UserModel.authenticateToken(token)
-
-        const userInfo = await UserModel.findOne({ where: { username: validUser.username } })
-        if (userInfo) {
-            req.user = userInfo;
-            req.token = userInfo.token;
-
-            next();
-        } else {
-            next('You\'re not authorized!!!!!!!!!!');
-        }
-
-        console.log("userInfo: ", userInfo)
-
-    } catch (error) {
-        next('Invalid login');
-    }
-
-}
+module.exports = bearerAuth;

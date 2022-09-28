@@ -1,19 +1,15 @@
 'use strict';
 
-const Post = ( sequelize, DataTypes ) => sequelize.define( 'Post', {
-    title: {
+const Post = (sequelize, DataTypes) => sequelize.define('Post', {
+    postTitle: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    content: {
+    postContent: {
         type: DataTypes.STRING,
-        defaultValue: 'My name is Fatima'
-    },
-    img : {
-        type: DataTypes.STRING,
-        defaultValue: 'https://www.computersciencedegreehub.com/wp-content/uploads/2016/02/what-is-coding-768x512.jpg'
-    }
-});
+        defaultValue: 'Just laugh!'
+    } 
+
+})
 
 module.exports = Post;
-
