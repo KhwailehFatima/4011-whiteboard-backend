@@ -7,8 +7,7 @@ const user = require('./user.model');
 
 const collection = require('../collections/user-comment-routes');
 
-// const POSTGRES_URL = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL
-const sequelizeOption = {
+ const sequelizeOption = {
     dialectOptions: {
         ssl: {
             require: true,
@@ -27,7 +26,7 @@ let sequelize = new Sequelize(POSTGRES_URL,
 
 // check if you  are authenticated and the connection is connected or not
 sequelize.authenticate().then(() => {
-    console.log('Database Connected to postgres')
+    console.log('Database Connected to fatimakh')
 }).catch((error) => {
     console.log(error)
 });
@@ -36,15 +35,17 @@ const postModel = post(sequelize, DataTypes);
 const commentModel = comment(sequelize, DataTypes);
 const userModel = user(sequelize, DataTypes);
 
-// relations between post and comment
+// add relations between post and comment
 postModel.hasMany(commentModel, { foreignKey: 'postID', sourceKey: 'id' })
 commentModel.belongsTo(postModel, { foreignKey: 'postID', targetKey: 'id' })
 
-// relations between user and comment
+// add relations between user and comment
 userModel.hasMany(commentModel, { foreignKey: 'userID', sourceKey: 'id' })
 commentModel.belongsTo(userModel, { foreignKey: 'userID', targetKey: 'id' })
 
+
 // adding creator from userModel userName to commentModel creator
+
 commentModel.addHook('beforeCreate', async (comment) => {
     const user = await userModel.findOne({ where: { id: comment.userID } })
     comment.creator = user.userName

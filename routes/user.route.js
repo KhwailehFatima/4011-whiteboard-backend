@@ -4,6 +4,7 @@ const express = require('express');
 const { signup, allUser, signin } = require('../controllers/user.controller');
 const router = express.Router();
 
+
 const basicAuth = require('../middlewares/userAuth');
 const bearerAuth = require('../middlewares/bearerAuthUser')
 
