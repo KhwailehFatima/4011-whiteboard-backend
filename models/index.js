@@ -21,7 +21,7 @@ const POSTGRES_URL = process.env.DATABASE_URL
 
 
 let sequelize = new Sequelize(POSTGRES_URL,
-    sequelizeOption
+    // sequelizeOption
 );
 
 // check if you  are authenticated and the connection is connected or not

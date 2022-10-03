@@ -26,8 +26,8 @@ app.get( '/', ( req, res ) => {
     } );
 } );
 
-// app.use( errorHandler );
-// app.use( notFoundHandler );
+app.use( errorHandler );
+app.use( notFoundHandler );
 
 function start ( port ) {
     app.listen( port, () => console.log( `Up an running on port ${port}` ) );
